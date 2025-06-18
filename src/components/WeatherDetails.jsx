@@ -1,77 +1,67 @@
-import { Sunrise, Sunset, Thermometer, Eye, Gauge, CloudRain } from "lucide-react"
+import React from "react";
+import { Sun, Moon } from "lucide-react";
 
 const WeatherDetails = ({ weather, units }) => {
-  if (!weather) return null
+  if (!weather) return null;
 
   const {
-    main: { temp_min, temp_max, pressure },
+    main: { feels_like, humidity, pressure },
+    wind: { speed },
     sys: { sunrise, sunset },
-    visibility,
-    clouds: { all: cloudiness },
-  } = weather
+  } = weather;
 
-  const tempUnit = units === "metric" ? "°C" : "°F"
-  const pressureUnit = "hPa"
-  const visibilityKm = (visibility / 1000).toFixed(1)
+  const tempUnit = units === "metric" ? "°C" : "°F";
+  const windUnit = units === "metric" ? "m/s" : "mph";
 
-  const formatTime = (timestamp) => {
-    const date = new Date(timestamp * 1000)
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-  }
-
-  const detailItems = [
-    {
-      icon: <Sunrise className="text-orange-500" size={24} />,
-      label: "Sunrise",
-      value: formatTime(sunrise),
-    },
-    {
-      icon: <Sunset className="text-red-500" size={24} />,
-      label: "Sunset",
-      value: formatTime(sunset),
-    },
-    {
-      icon: <Thermometer className="text-red-600" size={24} />,
-      label: "Min Temp",
-      value: `${Math.round(temp_min)}${tempUnit}`,
-    },
-    {
-      icon: <Thermometer className="text-orange-600" size={24} />,
-      label: "Max Temp",
-      value: `${Math.round(temp_max)}${tempUnit}`,
-    },
-    {
-      icon: <Gauge className="text-blue-600" size={24} />,
-      label: "Pressure",
-      value: `${pressure} ${pressureUnit}`,
-    },
-    {
-      icon: <Eye className="text-gray-600" size={24} />,
-      label: "Visibility",
-      value: `${visibilityKm} km`,
-    },
-    {
-      icon: <CloudRain className="text-blue-400" size={24} />,
-      label: "Cloudiness",
-      value: `${cloudiness}%`,
-    },
-  ]
+  const formatTime = (timestamp) =>
+    new Date(timestamp * 1000).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6">
-      <h2 className="text-xl font-bold mb-4">Weather Details</h2>
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md transition-colors duration-300">
+      <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
+        Weather Details
+      </h3>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {detailItems.map((item, index) => (
-          <div key={index} className="flex flex-col items-center p-3 rounded-lg bg-gray-50">
-            <div className="mb-2">{item.icon}</div>
-            <p className="text-sm text-gray-500">{item.label}</p>
-            <p className="font-semibold">{item.value}</p>
-          </div>
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-800 dark:text-gray-200">
+        <div className="flex items-center justify-between">
+          <span>Feels Like:</span>
+          <span className="font-semibold">
+            {Math.round(feels_like)}{tempUnit}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span>Humidity:</span>
+          <span className="font-semibold">{humidity}%</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span>Pressure:</span>
+          <span className="font-semibold">{pressure} hPa</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span>Wind Speed:</span>
+          <span className="font-semibold">{speed} {windUnit}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="flex items-center gap-1">
+            <Sun size={16} className="text-yellow-400" />
+            Sunrise:
+          </span>
+          <span className="font-semibold">{formatTime(sunrise)}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="flex items-center gap-1">
+            <Moon size={16} className="text-indigo-400" />
+            Sunset:
+          </span>
+          <span className="font-semibold">{formatTime(sunset)}</span>
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default WeatherDetails
+export default WeatherDetails;
